@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxt.dao.MergantMapper">
+  <resultMap id="BaseResultMap" type="com.qxt.pojo.Mergant">
+    <id column="u_id" jdbcType="BIGINT" property="uId" />
+    <result column="m_name" jdbcType="VARCHAR" property="mName" />
+    <result column="m_tel" jdbcType="VARCHAR" property="mTel" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="add_price" jdbcType="DOUBLE" property="addPrice" />
+    <result column="min_price" jdbcType="DOUBLE" property="minPrice" />
+    <result column="opentime" jdbcType="TIME" property="opentime" />
+    <result column="closetime" jdbcType="TIME" property="closetime" />
+    <result column="r_id" jdbcType="INTEGER" property="rId" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="boss_name" jdbcType="VARCHAR" property="bossName" />
+    <result column="boss_tel" jdbcType="VARCHAR" property="bossTel" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <association property="account" column="u_id" select="com.qxt.dao.AccountMapper.selectByPrimaryKey" />
+    <association property="region" column="r_id" select="com.qxt.dao.RegionMapper.selectByPrimaryKey" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from mergant
+    where u_id = #{uId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qxt.pojo.Mergant">
+    insert into mergant (u_id, m_name, m_tel, 
+      location, opentime, closetime, 
+      r_id, type, boss_name, boss_tel)
+    values (#{uId,jdbcType=BIGINT}, #{mName,jdbcType=VARCHAR}, #{mTel,jdbcType=VARCHAR}, 
+      #{location,jdbcType=VARCHAR}, #{opentime,jdbcType=TIME}, #{closetime,jdbcType=TIME}, 
+      #{rId,jdbcType=INTEGER}, #{type,jdbcType=CHAR}, #{bossName,jdbcType=VARCHAR}, #{bossTel,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qxt.pojo.Mergant">
+    update mergant
+    set m_name = #{mName,jdbcType=VARCHAR},
+      m_tel = #{mTel,jdbcType=VARCHAR},
+      location = #{location,jdbcType=VARCHAR},
+      opentime = #{opentime,jdbcType=TIME},
+      closetime = #{closetime,jdbcType=TIME},
+      r_id = #{rId,jdbcType=INTEGER},
+      type = #{type,jdbcType=CHAR},
+      boss_name = #{bossName,jdbcType=VARCHAR},
+      boss_tel = #{bossTel,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      add_price = #{addPrice,jdbcType=DOUBLE},
+      min_price = #{minPrice,jdbcType=DOUBLE},
+    where u_id = #{uId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select u_id, m_name, m_tel, location, opentime, closetime, r_id, type, boss_name, 
+    boss_tel, create_time, update_time,min_price,add_price
+    from mergant
+    where u_id = #{uId,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" parameterType="com.qxt.pojo.Mergant" resultMap="BaseResultMap">
+	select u_id, m_name, m_tel, location, opentime, closetime, r_id, type, boss_name, 
+    boss_tel, mergant.create_time, mergant.update_time,min_price,add_price
+    from mergant
+    LEFT JOIN account A on mergant.u_id = A.id 
+    LEFT JOIN region G on mergant.r_id = G.id 
+    where A.REMOVED = '0'
+    <if test="mName != null">
+     AND m_name LIKE CONCAT('%',#{mName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="type != null">
+     AND type LIKE CONCAT('%',#{type,jdbcType=VARCHAR},'%')
+    </if>
+    Order By update_time DESC
+  </select>
+</mapper>

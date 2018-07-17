@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxt.dao.AccountMapper">
+  <resultMap id="BaseResultMap" type="com.qxt.pojo.Account">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="u_type" jdbcType="TINYINT" property="uType" />
+    <result column="REMOVED" jdbcType="CHAR" property="removed" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update account 
+    set REMOVED = '1' 
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qxt.pojo.Account" useGeneratedKeys="true" keyProperty="id">
+    insert into account (username, password, 
+      u_type)
+    values (#{username,jdbcType=VARCHAR}, MD5(#{password,jdbcType=VARCHAR}), 
+      #{uType,jdbcType=TINYINT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qxt.pojo.Account">
+    update account
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      u_type = #{uType,jdbcType=TINYINT},
+      REMOVED = #{removed,jdbcType=CHAR},
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updatePwByPrimaryKey" parameterType="com.qxt.pojo.Account">
+    update account
+    set password = MD5(#{password,jdbcType=VARCHAR})
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByUnAndPwAndType" parameterType="com.qxt.pojo.Account" resultMap="BaseResultMap">
+    select id, username, u_type, REMOVED, create_time, update_time
+    from account
+    where REMOVED = '0' AND username = #{username,jdbcType=VARCHAR} 
+      AND password = MD5(#{password,jdbcType=VARCHAR})
+      AND u_type = #{uType,jdbcType=CHAR}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, username, password, u_type, REMOVED, create_time, update_time
+    from account
+    where REMOVED = '0' AND id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, username, password, u_type, REMOVED, create_time, update_time
+    from account
+    where REMOVED = '0'
+  </select>
+  <select id="selectByUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select id, username, password, u_type, REMOVED, create_time, update_time
+    from account
+    where username = #{username,jdbcType=VARCHAR} AND REMOVED = '0'
+  </select>
+</mapper>

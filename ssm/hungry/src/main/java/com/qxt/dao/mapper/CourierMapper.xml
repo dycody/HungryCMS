@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxt.dao.CourierMapper">
+  <resultMap id="BaseResultMap" type="com.qxt.pojo.Courier">
+    <id column="u_id" jdbcType="BIGINT" property="uId" />
+    <result column="r_id" jdbcType="INTEGER" property="rId" />
+    <result column="tel" jdbcType="VARCHAR" property="tel" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <association property="account" column="u_id" select="com.qxt.dao.AccountMapper.selectByPrimaryKey" />
+    <association property="region" column="r_id" select="com.qxt.dao.RegionMapper.selectByPrimaryKey" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from courier
+    where u_id = #{uId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qxt.pojo.Courier">
+    insert into courier (u_id, r_id, tel, 
+      name, create_time, update_time
+      )
+    values (#{uId,jdbcType=BIGINT}, #{rId,jdbcType=INTEGER}, #{tel,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qxt.pojo.Courier">
+    update courier
+    set r_id = #{rId,jdbcType=INTEGER},
+      tel = #{tel,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+    where u_id = #{uId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select u_id, r_id, tel, name, create_time, update_time
+    from courier
+    where u_id = #{uId,jdbcType=BIGINT}
+  </select>
+  <select id="selectBestByRegionId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	select c.*
+	from courier c
+	left join orderu o on o.courier_id = c.u_id
+	where c.r_id = #{rId,jdbcType=INTEGER}
+	group by c.u_id
+	order by count(*)
+	limit 1
+  </select>
+  
+  <select id="selectAll" parameterType="com.qxt.pojo.Courier" resultMap="BaseResultMap">
+    select u_id, r_id, tel, courier.name, courier.create_time, courier.update_time
+    from courier
+    LEFT JOIN account A on courier.u_id = A.id 
+    LEFT JOIN region G on courier.r_id = G.id 
+    where A.REMOVED = '0'
+    <if test="name != null">
+     AND courier.name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="account != null">
+     AND username LIKE CONCAT('%',#{account.username,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="rId != null">
+     AND r_id LIKE CONCAT('%',#{rId,jdbcType=INTEGER},'%')
+    </if>
+    Order By update_time DESC
+  </select>
+</mapper>

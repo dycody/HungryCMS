@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxt.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.qxt.pojo.User">
+    <id column="u_id" jdbcType="BIGINT" property="uId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="tel" jdbcType="VARCHAR" property="tel" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <association property="account" column="u_id" select="com.qxt.dao.AccountMapper.selectByPrimaryKey" />
+  </resultMap>
+   <insert id="insert" parameterType="com.qxt.pojo.User">
+    insert into user (u_id, name, location,tel)
+    values (#{uId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qxt.pojo.User">
+  	update user
+    set name = #{name,jdbcType=VARCHAR},
+    location = #{location,jdbcType=VARCHAR},
+      tel = #{tel,jdbcType=VARCHAR}
+    where u_id = #{uId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select u_id, name, location, tel, create_time, update_time
+    from user
+    where u_id = #{uId,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" parameterType="com.qxt.pojo.User" resultMap="BaseResultMap">
+    select u_id, user.name, location, tel, user.create_time, user.update_time
+    from user
+    LEFT JOIN account A on user.u_id = A.id 
+    where A.REMOVED = '0'
+    <if test="name != null">
+     AND name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="account != null">
+     AND username LIKE CONCAT('%',#{account.username,jdbcType=VARCHAR},'%')
+    </if>
+    Order By update_time DESC
+  </select>
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxt.dao.FoodMapper">
+  <resultMap id="BaseResultMap" type="com.qxt.pojo.Food">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="u_id" jdbcType="BIGINT" property="uId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="yuan_price" jdbcType="DOUBLE" property="yuanPrice" />
+    <result column="cut_price" jdbcType="DOUBLE" property="cutPrice" />
+    <result column="REMOVED" jdbcType="CHAR" property="removed" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="picture" jdbcType="VARCHAR" property="picture" />
+    <result column="inf" jdbcType="LONGVARCHAR" property="inf" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update food 
+    set REMOVED = '1' 
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qxt.pojo.Food">
+    insert into food (u_id, name, 
+      yuan_price, cut_price,
+	 picture, inf)
+    values (#{uId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+      #{yuanPrice,jdbcType=DOUBLE}, #{cutPrice,jdbcType=DOUBLE},#{picture,jdbcType=VARCHAR}, 
+      #{inf,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qxt.pojo.Food">
+    update food
+    set name = #{name,jdbcType=VARCHAR},
+      yuan_price = #{yuanPrice,jdbcType=DOUBLE},
+      cut_price = #{cutPrice,jdbcType=DOUBLE},
+      picture = #{picture,jdbcType=VARCHAR},
+      inf = #{inf,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, u_id, name, yuan_price, cut_price, REMOVED, create_time, update_time, 
+    picture, inf
+    from food
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectAll" parameterType="com.qxt.pojo.Food" resultMap="BaseResultMap">
+    select id, u_id, name, yuan_price, cut_price, REMOVED, create_time, update_time, 
+    picture, inf
+    from food
+    where REMOVED = '0'
+    <if test="name != null">
+     AND name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="uId != null">
+     AND u_id = #{uId,jdbcType=BIGINT}
+    </if>
+    Order By update_time DESC
+  </select>
+</mapper>

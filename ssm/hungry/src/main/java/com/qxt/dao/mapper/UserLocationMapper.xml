@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxt.dao.UserLocationMapper">
+  <resultMap id="BaseResultMap" type="com.qxt.pojo.UserLocation">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="rec_name" jdbcType="VARCHAR" property="recName" />
+    <result column="rec_tel" jdbcType="VARCHAR" property="recTel" />
+    <result column="REMOVED" jdbcType="CHAR" property="removed" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_location
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qxt.pojo.UserLocation">
+    insert into user_location (id, user_id, location, 
+      rec_name, rec_tel, REMOVED, 
+      create_time, update_time)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{location,jdbcType=VARCHAR}, 
+      #{recName,jdbcType=VARCHAR}, #{recTel,jdbcType=VARCHAR}, #{removed,jdbcType=CHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qxt.pojo.UserLocation">
+    update user_location
+    set user_id = #{userId,jdbcType=BIGINT},
+      location = #{location,jdbcType=VARCHAR},
+      rec_name = #{recName,jdbcType=VARCHAR},
+      rec_tel = #{recTel,jdbcType=VARCHAR},
+      REMOVED = #{removed,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, user_id, location, rec_name, rec_tel, REMOVED, create_time, update_time
+    from user_location
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, user_id, location, rec_name, rec_tel, REMOVED, create_time, update_time
+    from user_location
+  </select>
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxt.dao.OrderuMapper">
+  <resultMap id="BaseResultMap" type="com.qxt.pojo.Orderu">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="courier_id" jdbcType="BIGINT" property="courierId" />
+    <result column="mergant_id" jdbcType="BIGINT" property="mergantId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="add_price" jdbcType="DOUBLE" property="addPrice" />
+    <result column="real_price" jdbcType="DOUBLE" property="realPrice" />
+    <result column="rec_name" jdbcType="VARCHAR" property="recName" />
+    <result column="rec_tel" jdbcType="VARCHAR" property="recTel" />
+    <result column="location_from" jdbcType="VARCHAR" property="locationFrom" />
+    <result column="location_to" jdbcType="VARCHAR" property="locationTo" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="REMOVED" jdbcType="CHAR" property="removed" />
+    <result column="REACH" jdbcType="CHAR" property="reach" />
+    <association property="mergant" column="mergant_id" select="com.qxt.dao.MergantMapper.selectByPrimaryKey" />
+    <association property="courier" column="courier_id" select="com.qxt.dao.CourierMapper.selectByPrimaryKey" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from orderu
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qxt.pojo.Orderu" useGeneratedKeys="true" keyProperty="id">
+    insert into orderu (courier_id, mergant_id, 
+      user_id, add_price, real_price, 
+      rec_name, rec_tel, location_from, 
+      location_to)
+    values (#{courierId,jdbcType=BIGINT}, #{mergantId,jdbcType=BIGINT}, 
+      #{userId,jdbcType=BIGINT}, #{addPrice,jdbcType=DOUBLE}, #{realPrice,jdbcType=DOUBLE}, 
+      #{recName,jdbcType=VARCHAR}, #{recTel,jdbcType=VARCHAR}, #{locationFrom,jdbcType=VARCHAR}, 
+      #{locationTo,jdbcType=VARCHAR})
+  </insert>
+  <update id="reachByPrimaryKey" parameterType="java.lang.Long">
+    update orderu 
+    set REACH = '1' 
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="deleteorderByPrimaryKey" parameterType="java.lang.Long">
+    update orderu 
+    set REACH = '2' 
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qxt.pojo.Orderu">
+    update orderu
+    set courier_id = #{courierId,jdbcType=BIGINT},
+      mergant_id = #{mergantId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      add_price = #{addPrice,jdbcType=DOUBLE},
+      real_price = #{realPrice,jdbcType=DOUBLE},
+      rec_name = #{recName,jdbcType=VARCHAR},
+      rec_tel = #{recTel,jdbcType=VARCHAR},
+      location_from = #{locationFrom,jdbcType=VARCHAR},
+      location_to = #{locationTo,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      REMOVED = #{removed,jdbcType=CHAR},
+      REACH = #{reach,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, courier_id, mergant_id, user_id, add_price, real_price, rec_name, rec_tel, 
+    location_from, location_to, create_time, update_time, REMOVED, REACH
+    from orderu
+    where id = #{id,jdbcType=BIGINT}
+    Order By update_time desc
+  </select>
+  <select id="selectAll" parameterType="com.qxt.pojo.Orderu" resultMap="BaseResultMap">
+    select id, courier_id, mergant_id, user_id, add_price, real_price, rec_name, rec_tel, 
+    location_from, location_to, create_time, update_time, REMOVED, REACH
+        from orderu
+    where REMOVED = '0'
+    <if test="mergantId != null">
+     AND mergant_id = #{mergantId,jdbcType=BIGINT}
+    </if>
+    <if test="courierId != null">
+     AND courier_id = #{courierId,jdbcType=BIGINT}
+    </if>
+    <if test="userId != null">
+     AND user_id = #{userId,jdbcType=BIGINT}
+    </if>
+    Order By update_time desc
+  </select>
+</mapper>

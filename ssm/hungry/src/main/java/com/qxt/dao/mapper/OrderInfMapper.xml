@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxt.dao.OrderInfMapper">
+  <resultMap id="BaseResultMap" type="com.qxt.pojo.OrderInf">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="food_name" jdbcType="VARCHAR" property="foodName" />
+    <result column="price" jdbcType="DOUBLE" property="price" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from order_inf
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qxt.pojo.OrderInf">
+    insert into order_inf (id, food_name, price, 
+      num, order_id)
+    values (#{id,jdbcType=BIGINT}, #{foodName,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, 
+      #{num,jdbcType=INTEGER}, #{orderId,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qxt.pojo.OrderInf">
+    update order_inf
+    set food_name = #{foodName,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DOUBLE},
+      num = #{num,jdbcType=INTEGER},
+      order_id = #{orderId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, food_name, price, num, order_id
+    from order_inf
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, food_name, price, num, order_id
+    from order_inf
+  </select>
+  <select id="selectByOrderId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select id, food_name, price, num, order_id
+    from order_inf
+    where order_id = #{oId,jdbcType=BIGINT}
+  </select>
+  
+</mapper>
